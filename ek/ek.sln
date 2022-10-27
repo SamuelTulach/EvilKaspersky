@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32602.215
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ek", "ek\ek.vcxproj", "{21027971-610C-4959-B997-CE4CF5C2BB83}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21027971-610C-4959-B997-CE4CF5C2BB83}.Release|x64.ActiveCfg = Release|x64
+		{21027971-610C-4959-B997-CE4CF5C2BB83}.Release|x64.Build.0 = Release|x64
+		{21027971-610C-4959-B997-CE4CF5C2BB83}.Release|x64.Deploy.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BC9C947A-D4D8-443A-AADB-D201D8DE98E6}
+	EndGlobalSection
+EndGlobal
