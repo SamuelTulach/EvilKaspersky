@@ -156,3 +156,17 @@ namespace types
 #define STATUS_SCAN_3_NOT_FOUND 0xCCCCCC4
 #define STATUS_SCAN_4_NOT_FOUND 0xCCCCCC5
 #define STATUS_HVM_START_FAILED 0xCCCCCC6
+#define STATUS_HOOK_0_FAILED 0xCCCCCC7
+#define STATUS_HOOK_1_FAILED 0xCCCCCC8
+#define STATUS_HOOK_2_FAILED 0xCCCCCC9
+#define STATUS_HOOK_3_FAILED 0xCCCCCF0
+
+namespace indexes
+{
+	// can be read using SSDTView or Windows Kernel Explorer
+	// should correspond with syscall numbers
+	static USHORT NtUserSetGestureConfigIndex = 1234;
+	static USHORT NtUserSetSensorPresenceIndex = 978;
+	static USHORT NtUserSetSystemCursorIndex = 1261;
+	static USHORT NtGdiGetEmbUFIIndex = 697;
+}

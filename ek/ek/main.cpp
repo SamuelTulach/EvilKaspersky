@@ -7,7 +7,85 @@ static UINT* ssdtServiceCount;
 static UINT* shadowSsdtServiceCount;
 static UINT* provider;
 
-extern "C" NTSTATUS DriverEntry(void* driver, void* registry)
+UINT GetServiceCountSsdt()
+{
+	return ssdtServiceCount ? *ssdtServiceCount : 0;
+}
+
+UINT GetServiceCountShadow()
+{
+	return shadowSsdtServiceCount ? *shadowSsdtServiceCount : 0;
+}
+
+BOOL HookSsdtRoutine(USHORT index, VOID* dest, VOID** original)
+{
+	if (!systemDispatchArray || !dest || !original)
+		return false;
+
+	UINT svcCount = GetServiceCountSsdt();
+	if (!svcCount || index >= svcCount)
+		return false;
+
+	*original = *systemDispatchArray[index];
+	*systemDispatchArray[index] = dest;
+
+	return true;
+}
+
+BOOL UnhookSsdtRoutine(USHORT index, VOID* original)
+{
+	if (!systemDispatchArray || !original)
+		return false;
+
+	UINT svcCount = GetServiceCountSsdt();
+	if (!svcCount || index >= svcCount || *systemDispatchArray[index] == original)
+		return false;
+
+	*systemDispatchArray[index] = original;
+
+	return true;
+}
+
+BOOL HookShadowSsdtRoutine(USHORT index, VOID* dest, VOID** original)
+{
+	if (!systemDispatchArray || !dest || !original)
+		return false;
+
+	UINT svcCount = GetServiceCountSsdt(), svcCountShadowSsdt = GetServiceCountShadow();
+	if (!svcCount || !svcCountShadowSsdt)
+		return false;
+
+	UINT indexDispatchTable = (index - 0x1000) + svcCount;
+	UINT dispatchTableLimit = svcCount + svcCountShadowSsdt;
+	if (indexDispatchTable >= dispatchTableLimit)
+		return false;
+
+	*original = *systemDispatchArray[indexDispatchTable];
+	*systemDispatchArray[indexDispatchTable] = dest;
+
+	return true;
+}
+
+BOOL UnhookShadowSsdtRoutine(USHORT index, VOID* original)
+{
+	if (!systemDispatchArray || !original)
+		return false;
+
+	const auto svcCount = GetServiceCountSsdt(), svcCountShadowSsdt = GetServiceCountShadow();
+	if (!svcCount || !svcCountShadowSsdt)
+		return false;
+
+	const auto indexDispatchTable = (index - 0x1000) + svcCount;
+	const auto dispatchTableLimit = svcCount + svcCountShadowSsdt;
+	if (indexDispatchTable >= dispatchTableLimit || *systemDispatchArray[indexDispatchTable] == original)
+		return false;
+
+	*systemDispatchArray[indexDispatchTable] = original;
+
+	return true;
+}
+
+extern "C" NTSTATUS DriverEntry(VOID* driver, VOID* registry)
 {
 	PROTECT_ULTRA();
 	UNREFERENCED_PARAMETER(driver);
@@ -50,7 +128,22 @@ extern "C" NTSTATUS DriverEntry(void* driver, void* registry)
 	if (!NT_SUCCESS(status))
 		return STATUS_HVM_START_FAILED;
 
+	VOID* dummy = nullptr;
+	bool hooked = HookShadowSsdtRoutine(indexes::NtUserSetGestureConfigIndex, &PsLookupProcessByProcessId, &dummy);
+	if (!hooked)
+		return STATUS_HOOK_0_FAILED;
 
+	hooked = HookShadowSsdtRoutine(indexes::NtUserSetSensorPresenceIndex, &ExAllocatePool, &dummy);
+	if (!hooked)
+		return STATUS_HOOK_1_FAILED;
+
+	// hooked = HookShadowSsdtRoutine(indexes::NtUserSetSystemCursorIndex, &ExAllocatePool, &dummy);
+	// if (!hooked)
+	// 	return STATUS_HOOK_2_FAILED;
+
+	hooked = HookShadowSsdtRoutine(indexes::NtGdiGetEmbUFIIndex, &imports::MmCopyVirtualMemory, &dummy);
+	if (!hooked)
+		return STATUS_HOOK_3_FAILED;
 
 	PROTECT_END();
 	return STATUS_SUCCESS;
