@@ -93,7 +93,7 @@ BOOL UnhookShadowSsdtRoutine(USHORT index, VOID* original)
 	return true;
 }
 
-extern "C" NTSTATUS DriverEntry(VOID* driver, VOID* registry)
+extern "C" NTSTATUS DriverEntry(VOID * driver, VOID * registry)
 {
 	PROTECT_ULTRA();
 	UNREFERENCED_PARAMETER(driver);
@@ -103,7 +103,7 @@ extern "C" NTSTATUS DriverEntry(VOID* driver, VOID* registry)
 	if (!kasperskyBase)
 		return STATUS_KASPERSKY_BASE_NOT_FOUND;
 
-	SetHvmEvent_t setHvmEvent = reinterpret_cast<SetHvmEvent_t>(utils::FindPatternImage(kasperskyBase, EC("\x48\x83\xEC\x38\x48\x83\x3D"),EC("xxxxxxx")));
+	SetHvmEvent_t setHvmEvent = reinterpret_cast<SetHvmEvent_t>(utils::FindPatternImage(kasperskyBase, EC("\x48\x83\xEC\x38\x48\x83\x3D"), EC("xxxxxxx")));
 	if (!setHvmEvent)
 		return STATUS_SCAN_0_NOT_FOUND;
 
