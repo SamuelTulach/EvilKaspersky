@@ -19,6 +19,7 @@ UINT GetServiceCountShadow()
 
 BOOL HookSsdtRoutine(USHORT index, VOID* dest, VOID** original)
 {
+	PROTECT_ULTRA();
 	if (!systemDispatchArray || !dest || !original)
 		return false;
 
@@ -29,11 +30,13 @@ BOOL HookSsdtRoutine(USHORT index, VOID* dest, VOID** original)
 	*original = *systemDispatchArray[index];
 	*systemDispatchArray[index] = dest;
 
+	PROTECT_END();
 	return true;
 }
 
 BOOL UnhookSsdtRoutine(USHORT index, VOID* original)
 {
+	PROTECT_ULTRA();
 	if (!systemDispatchArray || !original)
 		return false;
 
@@ -43,11 +46,13 @@ BOOL UnhookSsdtRoutine(USHORT index, VOID* original)
 
 	*systemDispatchArray[index] = original;
 
+	PROTECT_END();
 	return true;
 }
 
 BOOL HookShadowSsdtRoutine(USHORT index, VOID* dest, VOID** original)
 {
+	PROTECT_ULTRA();
 	if (!systemDispatchArray || !dest || !original)
 		return false;
 
@@ -63,11 +68,13 @@ BOOL HookShadowSsdtRoutine(USHORT index, VOID* dest, VOID** original)
 	*original = *systemDispatchArray[indexDispatchTable];
 	*systemDispatchArray[indexDispatchTable] = dest;
 
+	PROTECT_END();
 	return true;
 }
 
 BOOL UnhookShadowSsdtRoutine(USHORT index, VOID* original)
 {
+	PROTECT_ULTRA();
 	if (!systemDispatchArray || !original)
 		return false;
 
@@ -82,6 +89,7 @@ BOOL UnhookShadowSsdtRoutine(USHORT index, VOID* original)
 
 	*systemDispatchArray[indexDispatchTable] = original;
 
+	PROTECT_END();
 	return true;
 }
 
@@ -129,21 +137,17 @@ extern "C" NTSTATUS DriverEntry(VOID* driver, VOID* registry)
 		return STATUS_HVM_START_FAILED;
 
 	VOID* dummy = nullptr;
-	bool hooked = HookShadowSsdtRoutine(indexes::NtUserSetGestureConfigIndex, &PsLookupProcessByProcessId, &dummy);
+	bool hooked = HookSsdtRoutine(indexes::NtSetCachedSigningLevelIndex, &PsLookupProcessByProcessId, &dummy);
 	if (!hooked)
 		return STATUS_HOOK_0_FAILED;
 
-	hooked = HookShadowSsdtRoutine(indexes::NtUserSetSensorPresenceIndex, &ExAllocatePool, &dummy);
+	hooked = HookSsdtRoutine(indexes::NtSetBootOptionsIndex, &ExAllocatePool, &dummy);
 	if (!hooked)
 		return STATUS_HOOK_1_FAILED;
 
-	// hooked = HookShadowSsdtRoutine(indexes::NtUserSetSystemCursorIndex, &ExAllocatePool, &dummy);
-	// if (!hooked)
-	// 	return STATUS_HOOK_2_FAILED;
-
-	hooked = HookShadowSsdtRoutine(indexes::NtGdiGetEmbUFIIndex, &imports::MmCopyVirtualMemory, &dummy);
+	hooked = HookSsdtRoutine(indexes::NtCreateProfileIndex, &imports::MmCopyVirtualMemory, &dummy);
 	if (!hooked)
-		return STATUS_HOOK_3_FAILED;
+		return STATUS_HOOK_2_FAILED;
 
 	PROTECT_END();
 	return STATUS_SUCCESS;

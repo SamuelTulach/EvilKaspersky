@@ -142,11 +142,6 @@ namespace imports
 	extern "C" NTKERNELAPI NTSTATUS NtQueryInformationAtom();
 }
 
-namespace types
-{
-	typedef void(__stdcall* VoidCall_t)(void* dummy1, void* dummy2, void* dummy3, void* dummy4);
-}
-
 #define RELATIVE_ADDRESS(address, size) ((PVOID)((PBYTE)(address) + *(PINT)((PBYTE)(address) + ((size) - (INT)sizeof(INT))) + (size)))
 
 #define STATUS_KASPERSKY_BASE_NOT_FOUND 0xCCCCCC0
@@ -165,8 +160,7 @@ namespace indexes
 {
 	// can be read using SSDTView or Windows Kernel Explorer
 	// should correspond with syscall numbers
-	static USHORT NtUserSetGestureConfigIndex = 1234;
-	static USHORT NtUserSetSensorPresenceIndex = 978;
-	static USHORT NtUserSetSystemCursorIndex = 1261;
-	static USHORT NtGdiGetEmbUFIIndex = 697;
+	static USHORT NtCreateProfileIndex = 186;
+	static USHORT NtSetCachedSigningLevelIndex = 393;
+	static USHORT NtSetBootOptionsIndex = 392;
 }
