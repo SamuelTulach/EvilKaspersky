@@ -78,12 +78,12 @@ BOOL UnhookShadowSsdtRoutine(USHORT index, VOID* original)
 	if (!systemDispatchArray || !original)
 		return false;
 
-	const auto svcCount = GetServiceCountSsdt(), svcCountShadowSsdt = GetServiceCountShadow();
+	UINT svcCount = GetServiceCountSsdt(), svcCountShadowSsdt = GetServiceCountShadow();
 	if (!svcCount || !svcCountShadowSsdt)
 		return false;
 
-	const auto indexDispatchTable = (index - 0x1000) + svcCount;
-	const auto dispatchTableLimit = svcCount + svcCountShadowSsdt;
+	UINT indexDispatchTable = (index - 0x1000) + svcCount;
+	UINT dispatchTableLimit = svcCount + svcCountShadowSsdt;
 	if (indexDispatchTable >= dispatchTableLimit || *systemDispatchArray[indexDispatchTable] == original)
 		return false;
 
