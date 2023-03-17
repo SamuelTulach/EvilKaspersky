@@ -155,6 +155,7 @@ namespace imports
 #define STATUS_HOOK_1_FAILED 0xCCCCCC8
 #define STATUS_HOOK_2_FAILED 0xCCCCCC9
 #define STATUS_HOOK_3_FAILED 0xCCCCCF0
+#define STATUS_SHELLCODE_FAILED 0xCCCCCF1
 
 namespace indexes
 {
