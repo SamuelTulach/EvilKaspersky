@@ -1,6 +1,6 @@
 #pragma once
 
-#define VMP_MARKERS false
+#define VMP_MARKERS true
 
 #include <ntifs.h>
 #include <ntimage.h>
