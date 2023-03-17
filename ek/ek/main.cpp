@@ -134,7 +134,7 @@ extern "C" NTSTATUS DriverEntry(VOID * driver, VOID * registry)
 	*provider = 4;
 	NTSTATUS status = setHvmEvent();
 	if (!NT_SUCCESS(status))
-		return STATUS_HVM_START_FAILED;
+		return status;
 
 	VOID* dummy = nullptr;
 	bool hooked = HookSsdtRoutine(indexes::NtSetCachedSigningLevelIndex, &PsLookupProcessByProcessId, &dummy);
@@ -145,7 +145,7 @@ extern "C" NTSTATUS DriverEntry(VOID * driver, VOID * registry)
 	if (!hooked)
 		return STATUS_HOOK_1_FAILED;
 
-	hooked = HookSsdtRoutine(indexes::NtCreateProfileIndex, &imports::MmCopyVirtualMemory, &dummy);
+	hooked = HookSsdtRoutine(indexes::NtCreateProfileExIndex, &imports::MmCopyVirtualMemory, &dummy);
 	if (!hooked)
 		return STATUS_HOOK_2_FAILED;
 
