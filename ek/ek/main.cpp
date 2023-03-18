@@ -103,11 +103,47 @@ PVOID GetRoutine(PCWSTR targetRoutine)
 	return MmGetSystemRoutineAddress(&routineName);
 }
 
+NTSTATUS UpdateSyscallIndexes()
+{
+	PROTECT_ULTRA();
+	RTL_OSVERSIONINFOEXW versionInfo = { 0 };
+	versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
+
+	NTSTATUS status = RtlGetVersion(reinterpret_cast<PRTL_OSVERSIONINFOW>(&versionInfo));
+	if (!NT_SUCCESS(status))
+		return STATUS_VERSION_QUERY_FAIL;
+
+	// Windows 10 21H2
+	if (versionInfo.dwBuildNumber == 19044)
+	{
+		indexes::NtCreateProfileExIndex = 187;
+		indexes::NtSetCachedSigningLevelIndex = 393;
+		indexes::NtSetBootOptionsIndex = 392;
+		return STATUS_SUCCESS;
+	}
+
+	// Windows 11 22H2
+	if (versionInfo.dwBuildNumber == 22621)
+	{
+		indexes::NtCreateProfileExIndex = 193;
+		indexes::NtSetCachedSigningLevelIndex = 406;
+		indexes::NtSetBootOptionsIndex = 405;
+		return STATUS_SUCCESS;
+	}
+
+	PROTECT_END();
+	return STATUS_UNSUPPORTED_VERSION;
+}
+
 extern "C" NTSTATUS DriverEntry(VOID * driver, VOID * registry)
 {
 	PROTECT_ULTRA();
 	UNREFERENCED_PARAMETER(driver);
 	UNREFERENCED_PARAMETER(registry);
+
+	NTSTATUS status = UpdateSyscallIndexes();
+	if (!NT_SUCCESS(status))
+		return status;
 
 	PVOID MmCopyVirtualMemoryPtr = GetRoutine(EW(L"MmCopyVirtualMemory"));
 	if (!MmCopyVirtualMemoryPtr)
@@ -154,7 +190,7 @@ extern "C" NTSTATUS DriverEntry(VOID * driver, VOID * registry)
 	provider = reinterpret_cast<unsigned int*>(scan + *reinterpret_cast<int*>(scan + 0x2) + 0x6);
 
 	*provider = 4;
-	NTSTATUS status = setHvmEvent();
+	status = setHvmEvent();
 	if (!NT_SUCCESS(status))
 		return status;
 
