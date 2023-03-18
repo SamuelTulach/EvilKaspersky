@@ -122,6 +122,15 @@ NTSTATUS UpdateSyscallIndexes()
 		return STATUS_SUCCESS;
 	}
 
+	// Windows 10 22H2
+	if (versionInfo.dwBuildNumber == 19045)
+	{
+		indexes::NtCreateProfileExIndex = 187;
+		indexes::NtSetCachedSigningLevelIndex = 393;
+		indexes::NtSetBootOptionsIndex = 392;
+		return STATUS_SUCCESS;
+	}
+
 	// Windows 11 22H2
 	if (versionInfo.dwBuildNumber == 22621)
 	{
