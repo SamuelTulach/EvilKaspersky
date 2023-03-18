@@ -135,7 +135,7 @@ namespace structs
 namespace imports
 {
 	extern "C" NTSTATUS ZwQuerySystemInformation(INT systemInformationClass, PVOID systemInformation, ULONG systemInformationLength, PULONG returnLength);
-	extern "C" NTSTATUS MmCopyVirtualMemory(PEPROCESS sourceProcess, PVOID sourceAddress, PEPROCESS targetProcess, PVOID targetAddress, SIZE_T bufferSize, KPROCESSOR_MODE previousMode, PSIZE_T returnSize);
+	//extern "C" NTSTATUS MmCopyVirtualMemory(PEPROCESS sourceProcess, PVOID sourceAddress, PEPROCESS targetProcess, PVOID targetAddress, SIZE_T bufferSize, KPROCESSOR_MODE previousMode, PSIZE_T returnSize);
 	extern "C" PPEB PsGetProcessPeb(PEPROCESS process);
 	extern "C" PVOID PsGetProcessSectionBaseAddress(PEPROCESS process);
 	extern "C" NTKERNELAPI NTSTATUS KeFlushCurrentTbImmediately();
@@ -156,6 +156,7 @@ namespace imports
 #define STATUS_HOOK_2_FAILED 0xCCCCCC9
 #define STATUS_HOOK_3_FAILED 0xCCCCCF0
 #define STATUS_SHELLCODE_FAILED 0xCCCCCF1
+#define STATUS_IMPORT_NOT_FOUND 0xCCCCCF2
 
 namespace indexes
 {

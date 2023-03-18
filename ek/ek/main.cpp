@@ -93,11 +93,31 @@ BOOL UnhookShadowSsdtRoutine(USHORT index, VOID* original)
 	return true;
 }
 
+PVOID GetRoutine(PCWSTR targetRoutine)
+{
+	UNICODE_STRING routineName;
+	RtlInitUnicodeString(&routineName, targetRoutine);
+
+	return MmGetSystemRoutineAddress(&routineName);
+}
+
 extern "C" NTSTATUS DriverEntry(VOID * driver, VOID * registry)
 {
 	PROTECT_ULTRA();
 	UNREFERENCED_PARAMETER(driver);
 	UNREFERENCED_PARAMETER(registry);
+
+	PVOID MmCopyVirtualMemoryPtr = GetRoutine(EW(L"MmCopyVirtualMemory"));
+	if (!MmCopyVirtualMemoryPtr)
+		return STATUS_IMPORT_NOT_FOUND;
+
+	PVOID ExAllocatePoolPtr = GetRoutine(EW(L"ExAllocatePool"));
+	if (!ExAllocatePoolPtr)
+		return STATUS_IMPORT_NOT_FOUND;
+
+	PVOID PsLookupProcessByProcessIdPtr = GetRoutine(EW(L"PsLookupProcessByProcessId"));
+	if (!PsLookupProcessByProcessIdPtr)
+		return STATUS_IMPORT_NOT_FOUND;
 
 	PCHAR kasperskyBase = utils::FindTargetModule(E("klhk.sys"));
 	if (!kasperskyBase)
@@ -137,15 +157,15 @@ extern "C" NTSTATUS DriverEntry(VOID * driver, VOID * registry)
 		return status;
 
 	VOID* dummy = nullptr;
-	bool hooked = HookSsdtRoutine(indexes::NtSetCachedSigningLevelIndex, &PsLookupProcessByProcessId, &dummy);
+	bool hooked = HookSsdtRoutine(indexes::NtSetCachedSigningLevelIndex, PsLookupProcessByProcessIdPtr, &dummy);
 	if (!hooked)
 		return STATUS_HOOK_0_FAILED;
 
-	hooked = HookSsdtRoutine(indexes::NtSetBootOptionsIndex, &ExAllocatePool, &dummy);
+	hooked = HookSsdtRoutine(indexes::NtSetBootOptionsIndex, ExAllocatePoolPtr, &dummy);
 	if (!hooked)
 		return STATUS_HOOK_1_FAILED;
 
-	hooked = HookSsdtRoutine(indexes::NtCreateProfileExIndex, &imports::MmCopyVirtualMemory, &dummy);
+	hooked = HookSsdtRoutine(indexes::NtCreateProfileExIndex, MmCopyVirtualMemoryPtr, &dummy);
 	if (!hooked)
 		return STATUS_HOOK_2_FAILED;
 

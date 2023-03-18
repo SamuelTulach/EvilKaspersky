@@ -66,7 +66,7 @@ public:
 
 		PsLookupProcessByProcessId = reinterpret_cast<PsLookupProcessByProcessId_t>(GetProcAddress(targetModule, "NtSetCachedSigningLevel"));
 		ExAllocatePool = reinterpret_cast<ExAllocatePool_t>(GetProcAddress(targetModule, "NtSetBootOptions"));
-		MmCopyVirtualMemory = reinterpret_cast<MmCopyVirtualMemory_t>(GetProcAddress(targetModule, "NtCreateProfile"));
+		MmCopyVirtualMemory = reinterpret_cast<MmCopyVirtualMemory_t>(GetProcAddress(targetModule, "NtCreateProfileEx"));
 
 		if (!PsLookupProcessByProcessId
 			|| !MmCopyVirtualMemory

@@ -110,6 +110,9 @@ int main()
 	printf("Waiting...\n");
 	Sleep(100);
 
+	printf("Press key\n");
+	getchar();
+
 	LargeBuffer* largeBuffer = static_cast<LargeBuffer*>(malloc(sizeof(LargeBuffer)));
 	printf("Short read test...\n");
 	memset(largeBuffer, 0, sizeof(LargeBuffer));
