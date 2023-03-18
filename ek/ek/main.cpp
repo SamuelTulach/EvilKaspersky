@@ -95,9 +95,11 @@ BOOL UnhookShadowSsdtRoutine(USHORT index, VOID* original)
 
 PVOID GetRoutine(PCWSTR targetRoutine)
 {
+	PROTECT_ULTRA();
 	UNICODE_STRING routineName;
 	RtlInitUnicodeString(&routineName, targetRoutine);
 
+	PROTECT_END();
 	return MmGetSystemRoutineAddress(&routineName);
 }
 
