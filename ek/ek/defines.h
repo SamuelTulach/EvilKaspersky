@@ -164,8 +164,8 @@ namespace indexes
 {
 	// can be read using SSDTView or Windows Kernel Explorer
 	// should correspond with syscall numbers
-	static USHORT NtCreateProfileIndex = 186;
 	static USHORT NtCreateProfileExIndex = 187;
-	static USHORT NtSetCachedSigningLevelIndex = 393;
+	//static USHORT NtSetCachedSigningLevelIndex = 393;
+	static USHORT NtSetBootEntryOrderIndex = 391;
 	static USHORT NtSetBootOptionsIndex = 392;
 }

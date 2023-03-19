@@ -64,7 +64,7 @@ public:
 			return;
 		printf("ntdll.dll: 0x%p\n", targetModule);
 
-		PsLookupProcessByProcessId = reinterpret_cast<PsLookupProcessByProcessId_t>(GetProcAddress(targetModule, "NtSetCachedSigningLevel"));
+		PsLookupProcessByProcessId = reinterpret_cast<PsLookupProcessByProcessId_t>(GetProcAddress(targetModule, "NtSetBootEntryOrder"));
 		ExAllocatePool = reinterpret_cast<ExAllocatePool_t>(GetProcAddress(targetModule, "NtSetBootOptions"));
 		MmCopyVirtualMemory = reinterpret_cast<MmCopyVirtualMemory_t>(GetProcAddress(targetModule, "NtCreateProfileEx"));
 
@@ -77,9 +77,9 @@ public:
 			return;
 		}
 
-		printf("NtSetCachedSigningLevelIndex: 0x%p\n", PsLookupProcessByProcessId);
-		printf("NtSetBootOptionsIndex: 0x%p\n", ExAllocatePool);
-		printf("NtCreateProfileIndex: 0x%p\n", MmCopyVirtualMemory);
+		printf("NtSetBootEntryOrder: 0x%p\n", PsLookupProcessByProcessId);
+		printf("NtSetBootOptions: 0x%p\n", ExAllocatePool);
+		printf("NtCreateProfile: 0x%p\n", MmCopyVirtualMemory);
 
 		DWORD64 status = PsLookupProcessByProcessId(reinterpret_cast<HANDLE>(GetCurrentProcessId()), &currentProcess);
 		if (status != 0)

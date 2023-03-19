@@ -117,7 +117,7 @@ NTSTATUS UpdateSyscallIndexes()
 	if (versionInfo.dwBuildNumber == 19044)
 	{
 		indexes::NtCreateProfileExIndex = 187;
-		indexes::NtSetCachedSigningLevelIndex = 393;
+		indexes::NtSetBootEntryOrderIndex = 391;
 		indexes::NtSetBootOptionsIndex = 392;
 		return STATUS_SUCCESS;
 	}
@@ -126,7 +126,7 @@ NTSTATUS UpdateSyscallIndexes()
 	if (versionInfo.dwBuildNumber == 19045)
 	{
 		indexes::NtCreateProfileExIndex = 187;
-		indexes::NtSetCachedSigningLevelIndex = 393;
+		indexes::NtSetBootEntryOrderIndex = 391;
 		indexes::NtSetBootOptionsIndex = 392;
 		return STATUS_SUCCESS;
 	}
@@ -135,7 +135,7 @@ NTSTATUS UpdateSyscallIndexes()
 	if (versionInfo.dwBuildNumber == 22621)
 	{
 		indexes::NtCreateProfileExIndex = 193;
-		indexes::NtSetCachedSigningLevelIndex = 406;
+		indexes::NtSetBootEntryOrderIndex = 404;
 		indexes::NtSetBootOptionsIndex = 405;
 		return STATUS_SUCCESS;
 	}
@@ -204,7 +204,7 @@ extern "C" NTSTATUS DriverEntry(VOID * driver, VOID * registry)
 		return status;
 
 	VOID* dummy = nullptr;
-	bool hooked = HookSsdtRoutine(indexes::NtSetCachedSigningLevelIndex, PsLookupProcessByProcessIdPtr, &dummy);
+	bool hooked = HookSsdtRoutine(indexes::NtSetBootEntryOrderIndex, PsLookupProcessByProcessIdPtr, &dummy);
 	if (!hooked)
 		return STATUS_HOOK_0_FAILED;
 
