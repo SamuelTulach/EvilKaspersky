@@ -1,5 +1,10 @@
 #include "general.h"
 
+/*
+ * Download beta version to get the latest driver:
+ * https://eap.kaspersky.com/category/811
+ */
+
 using SetHvmEvent_t = NTSTATUS(*)();
 
 static VOID*** systemDispatchArray;
